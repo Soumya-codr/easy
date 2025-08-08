@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Futuristic Layout</title>
+    <!-- Tailwind CSS for utility classes -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* Custom styles for the futuristic look */
+        :root {
+            --sidebar-width: 240px; /* Made sidebar smaller */
+            --sidebar-width-minimized: 80px;
+            --bg-color: #000000; /* Unified black background */
+            --sidebar-bg: #000000; /* Black sidebar */
+            --text-primary: #E0E0E0;
+            --text-secondary: #a0a0c0;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --hover-bg: rgba(255, 255, 255, 0.05);
+            --card-bg: rgba(255, 255, 255, 0.03);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            overflow: hidden;
+        }
+
+        /* Main layout container */
+        .main-layout {
+            display: flex;
+            height: 100vh;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Sidebar styling */
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--sidebar-bg);
+            padding: 0.75rem;
+            display: flex;
+            flex-direction: column;
+            transition: width 0.3s ease;
+            flex-shrink: 0;
+            border-right: 1px solid var(--border-color);
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem; /* Adjusted padding */
+            margin-bottom: 1rem;
+            overflow: hidden;
+            height: 56px;
+        }
+
+        .sidebar-toggle {
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            border: 1px solid transparent;
+            transition: border-color 0.2s ease;
+        }
+        
+        .sidebar-toggle:hover {
+            background: var(--hover-bg);
+            border-color: var(--border-color);
+        }
+
+        .hamburger-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+        }
+
+        .hamburger-icon span {
+            display: block;
+            width: 100%;
+            height: 2px;
+            background-color: var(--text-secondary);
+            border-radius: 1px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .sidebar-toggle:hover .hamburger-icon span {
+            background-color: #ffffff;
+        }
+
+        .nav-links {
+            flex-grow: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .nav-links ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        
+        .nav-links a {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem; /* Adjusted gap */
+            padding: 0.6rem; /* Adjusted padding */
+            border-radius: 0.5rem;
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: 0.9rem; /* Smaller font */
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+        
+        .nav-links a.active {
+            background: var(--hover-bg);
+        }
+        
+        .nav-links svg {
+            width: 24px; /* Bigger icon */
+            height: 24px; /* Bigger icon */
+            stroke: #ffffff; /* Changed to bright white */
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+        
+        .sidebar-footer {
+            padding: 0.75rem;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .logo-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .profile-pic {
+            width: 40px; /* Smaller pic */
+            height: 40px; /* Smaller pic */
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .sidebar.minimized {
+            width: var(--sidebar-width-minimized);
+        }
+        
+        .sidebar.minimized .nav-links span, .sidebar.minimized .sidebar-footer span, .sidebar.minimized .sidebar-header .logo-wrapper {
+            display: none;
+        }
+        
+        .sidebar.minimized .sidebar-header {
+            justify-content: center;
+        }
+        
+        .sidebar.minimized .nav-links a {
+            justify-content: center;
+        }
+
+        .sidebar.minimized .hamburger-icon span:nth-child(1) {
+            transform: translateY(8px) rotate(45deg);
+        }
+
+        .sidebar.minimized .hamburger-icon span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .sidebar.minimized .hamburger-icon span:nth-child(3) {
+            transform: translateY(-8px) rotate(-45deg);
+        }
+
+        .main-content {
+            flex-grow: 1;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: auto;
+            padding: 1.5rem;
+        }
+        
+        .top-bar-profile {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-layout" id="main-layout">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-wrapper">
+                    <img src="https://placehold.co/40x40/0a0c1c/ffffff?text=S" alt="Logo" class="profile-pic">
+                </div>
+                <button class="sidebar-toggle" id="sidebar-toggle">
+                    <div class="hamburger-icon">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </button>
+            </div>
+            <div class="nav-links">
+                <ul>
+                    <li><a href="#"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg><span>Dashboard</span></a></li>
+                    <li><a href="#"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span>Pomodoro</span></a></li>
+                    <li><a href="#"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span>Calendar</span></a></li>
+                    <li><a href="#"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><span>To-Do Grid</span></a></li>
+                    <li><a href="#"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20v-6m0-4V4m6 16v-2m0-4V4m-6 16v-4m0-4V4"/></svg><span>Insights</span></a></li>
+                    <li><a href="#"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg><span>About</span></a></li>
+                    <li><a href="#"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span>Settings</span></a></li>
+                </ul>
+            </div>
+            <div class="sidebar-footer">
+                 <a href="#">
+                    <div class="logo-wrapper">
+                        <img src="https://placehold.co/40x40/0a0c1c/ffffff?text=P" alt="Profile Picture" class="profile-pic">
+                        <span>Soumya</span>
+                    </div>
+                </a>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <div class="top-bar-profile">
+                <a href="#">
+                    <div class="logo-wrapper">
+                        <img src="https://placehold.co/40x40/0a0c1c/ffffff?text=P" alt="Profile Picture" class="profile-pic">
+                        <span>Soumya</span>
+                    </div>
+                </a>
+            </div>
+            <!-- Your content goes here -->
+        </main>
+    </div>
+
+    <script>
+        // --- Sidebar Toggle ---
+        const sidebar = document.getElementById('sidebar');
+        const toggleButton = document.getElementById('sidebar-toggle');
+        toggleButton.addEventListener('click', () => {
+            sidebar.classList.toggle('minimized');
+        });
+        
+        // --- Multi-color Hover Effect ---
+        const navLinks = document.querySelectorAll('.nav-links a, .sidebar-footer a');
+        const accentColors = ['#FF00FF', '#00FFFF', '#FFFF00', '#FF5733', '#7DFF33'];
+
+        navLinks.forEach(link => {
+            link.addEventListener('mouseover', () => {
+                const randomColor = accentColors[Math.floor(Math.random() * accentColors.length)];
+                link.style.backgroundColor = `${randomColor}26`; // 15% opacity
+                const svg = link.querySelector('svg');
+                if (svg) {
+                    svg.style.stroke = randomColor;
+                }
+            });
+
+            link.addEventListener('mouseout', () => {
+                link.style.backgroundColor = '';
+                const svg = link.querySelector('svg');
+                if (svg) {
+                    svg.style.stroke = '';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
